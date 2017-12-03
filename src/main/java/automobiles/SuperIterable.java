@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class SuperIterable<E> implements Iterable<E> {
@@ -52,19 +53,20 @@ public class SuperIterable<E> implements Iterable<E> {
     }
 
     // Iterator defines forEach, which does this...
-//  public void forEvery(Consumer<E> op) {
-//    for (E e : self) {
-//      op.accept(e);
-//    }
-//  }
-//  
+    public void forEvery(Consumer<E> op) {
+        for (E e : self) {
+            op.accept(e);
+        }
+    }
+
     @Override
     public Iterator<E> iterator() {
         return self.iterator();
     }
 
     public static void showAll(SuperIterable<?> i) {
-        i.forEach(x -> System.out.println(x));
+//        i.forEach(x -> System.out.println(x));
+        i.forEvery(x -> System.out.println(x));
         System.out.println("----------------------------------");
     }
 
@@ -74,9 +76,18 @@ public class SuperIterable<E> implements Iterable<E> {
 
         stringIter.forEach(x -> System.out.println(x));
         System.out.println("-------------");
+
+        stringIter.forEvery(System.out::println);
+        System.out.println("-------------");
+
+        System.out.println("------------- Names filter by length equal 4 -------------");
         showAll(stringIter.filter(x -> x.length() > 4));
+        System.out.println("------------- All original names -------------");
         showAll(stringIter);
+
+        System.out.println("------------- Names filter by length equal 4 and map to Uppercase -------------");
         showAll(stringIter.filter(x -> x.length() > 4).map(x -> x.toUpperCase()));
+        System.out.println("------------- All original names -------------");
         showAll(stringIter);
 
         SuperIterable<Car> fleet = new SuperIterable<>(Arrays.asList(
@@ -108,7 +119,7 @@ public class SuperIterable<E> implements Iterable<E> {
 
         System.out.println("------------- All original cars -------------");
         showAll(fleet);
-        System.out.println("------------- All passengers with flat map -------------");
+        System.out.println("------------- All passengers from blue cars with flat map -------------");
         showAll(
                 fleet
                         .filter(c -> c.getColor().equals("Blue"))
@@ -141,7 +152,7 @@ public class SuperIterable<E> implements Iterable<E> {
                         .filter(c -> c.getColor().equals("Blue"))
                         .flatMap((Car c) -> {
                             return new SuperIterable<>(c.getPassengers())
-                                    .map((String  x) -> {
+                                    .map((String x) -> {
                                         return x + " is in a " + c.getColor() + " car ";
                                     });
                         })
@@ -155,7 +166,7 @@ public class SuperIterable<E> implements Iterable<E> {
                         })
                         .flatMap((Car c) -> {
                             return new SuperIterable<>(c.getPassengers())
-                                    .map((String  x) -> {
+                                    .map((String x) -> {
                                         return x + " is in a " + c.getColor() + " car ";
                                     });
                         })
