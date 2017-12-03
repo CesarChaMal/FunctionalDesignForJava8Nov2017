@@ -123,10 +123,65 @@ public class SuperIterable<E> implements Iterable<E> {
                         .filter(c -> c.getColor().equals("Blue"))
                         .flatMap(c -> new SuperIterable<>(c.getPassengers())
                                 .map(x -> x + " is in a " + c.getColor() + " car "))
-//        .flatMap((Car c) -> {
-//          return new SuperIterable<>(c.getPassengers())
-//            .map(x -> x + " is in a " + c.getColor() + " car ");
-//        })
+        );
+
+        System.out.println("------------- All blue cars and his passengers with flat map in a block lambda -------------");
+        showAll(
+                fleet
+                        .filter(c -> c.getColor().equals("Blue"))
+                        .flatMap((Car c) -> {
+                            return new SuperIterable<>(c.getPassengers())
+                                    .map(x -> x + " is in a " + c.getColor() + " car ");
+                        })
+        );
+
+        System.out.println("------------- All blue cars and his passengers with flat map in 2 block lambda -------------");
+        showAll(
+                fleet
+                        .filter(c -> c.getColor().equals("Blue"))
+                        .flatMap((Car c) -> {
+                            return new SuperIterable<>(c.getPassengers())
+                                    .map((String  x) -> {
+                                        return x + " is in a " + c.getColor() + " car ";
+                                    });
+                        })
+        );
+
+        System.out.println("------------- All blue cars and his passengers with flat map in 3 block lambda -------------");
+        showAll(
+                fleet
+                        .filter((Car c) -> {
+                            return c.getColor().equals("Blue");
+                        })
+                        .flatMap((Car c) -> {
+                            return new SuperIterable<>(c.getPassengers())
+                                    .map((String  x) -> {
+                                        return x + " is in a " + c.getColor() + " car ";
+                                    });
+                        })
+        );
+
+        System.out.println("------------- All blue cars and his passengers with anonymous classes -------------");
+        showAll(
+                fleet
+                        .filter(new Predicate<Car>() {
+                            @Override
+                            public boolean test(Car c) {
+                                return c.getColor().equals("Blue");
+                            }
+                        })
+                        .flatMap(new Function<Car, SuperIterable<String>>() {
+                            @Override
+                            public SuperIterable<String> apply(Car c) {
+                                return new SuperIterable<>(c.getPassengers())
+                                        .map(new Function<String, String>() {
+                                            @Override
+                                            public String apply(String x) {
+                                                return x + " is in a " + c.getColor() + " car ";
+                                            }
+                                        });
+                            }
+                        })
         );
 
         System.out.println("------------- Just playing around -------------");
@@ -149,14 +204,14 @@ public class SuperIterable<E> implements Iterable<E> {
                 .filter(c -> c.getColor().equals("Blue"))
                 .flatMap(c -> new SuperIterable<>(c.getPassengers()).map(x -> x + " is in a " + c.getColor() + " car "))
         ).map(x -> x.self)
-        .forEach(System.out::println);
+                .forEach(System.out::println);
 
         System.out.println("------------- Just playing around -------------");
         Arrays.asList(fleet
                 .filter(c -> c.getColor().equals("Blue"))
                 .flatMap(c -> new SuperIterable<>(c.getPassengers()).map(x -> x + " is in a " + c.getColor() + " car "))
         ).stream()
-        .map(x -> x.self)
-        .forEach(System.out::println);
+                .map(x -> x.self)
+                .forEach(System.out::println);
     }
 }
