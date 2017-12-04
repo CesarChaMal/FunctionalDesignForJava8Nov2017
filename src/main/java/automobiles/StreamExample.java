@@ -9,6 +9,12 @@ import java.util.stream.Stream;
 public class StreamExample {
 
     public static void main(String[] args) {
+        Stream<String> stringListTest = Arrays.asList(
+                "Fred", "womble", "Jim", "Sheila", "banana").stream();
+        stringListTest.forEach(x -> System.out.println(x));
+        System.out.println("-------------");
+        System.out.println("------------- Stream can be only use once -------------");
+
         List<String> stringList = Arrays.asList(
                 "Fred", "womble", "Jim", "Sheila", "banana");
 
